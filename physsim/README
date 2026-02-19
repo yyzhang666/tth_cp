@@ -1,1 +1,448 @@
+2025/11/18 K.Fujii original version
+2025/12/06 K.Fujii revised
+2026/02/19 J.Tian revised & independently tested with all steps
+
+0) How to install external libraries for lcsoft 
+0-0a) expand the lcinstall package
+$ cd ~
+$ mkdir -p sandbox
+$ pushd sandbox
+$ tar -zxvf <somewhere>/lcinstall.tar.gz 
+.......
+$ ls
+lcinstall
+$ ls lcinstall
+README
+SRPMS
+lcsoft.tar.gz
+setup-physsim.sh
+
+
+0-0b) set up your rpmbuild environment
+$ cd ~
+$ mkdir -p rpmbuild/{BUILD,BUILDROOT,SOURCES,SPECS,SRPMS,RPMS/x86_64}
+$ cd rpmbuild/SPECS
+$ mkdir -p tmp/done
+$ cd tmp
+$ cp -a ~/sandbox/lcinstall/SRPMS/* .
+$ mkdir ~/sw
+
+
+0-1) pythia/v6.428 to build root5/whizard
+$ pwd
+<your home directory>/rpmbuild/SPECS/tmp
+$ rpm -i pythia-6.428-kekcc2c.src.rpm
+$ cd ..
+$ mkdir LOGs
+$ rpmbuild -ba pythia6.spec --nodebuginfo >& LOGs/pythia6 &
+$ tail -f LOGs/pythia6 
+...
+CTRL+C
+$ ls ../RPMS/x86_64/
+pythia-6.428-kekcc2c.x86_64.rpm
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/pythia-6.428-kekcc2c.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ mv home/<your user id>/sw/pythia ~/sw/
+$ cd ..
+$ rm -rf temp
+$ mv pythia-6.428-kekcc2c.src.rpm done/
+
+
+0-2) root/5.34.36 to build lcsoft
+	python/2.7.18
+		openssl10/
+$ pwd
+<your home directory>/rpmbuild/SPECS/tmp
+$ rpm -i root5-5.34.36-14.el96a.src.rpm 
+$ cd ..
+$ rpmbuild -ba root5.spec --nodebuginfo >& LOGs/root5 &
+$ tail -f LOGs/root5 
+...
+CTRL+C
+$ ls ../RPMS/x86_64/
+pythia-6.428-kekcc2a.x86_64.rpm  root5-5.34.36-14.el96a.x86_64.rpm
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/root5-5.34.36-14.el96a.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ mv home/<your user id>/sw/root ~/sw/
+$ cd ..
+$ rm -rf temp
+$ mv root5-5.34.36-14.el96a.src.rpm done/
+
+
+0-3) lcio/v02-13-01 to build lcsoft
+$ pwd
+<your home directory>/rpmbuild/SPECS/tmp
+$ rpm -i lcio213-02.13.01-kekcc2a.src.rpm
+$ cd ..
+$ rpmbuild -ba lcio-213.spec --nodebuginfo >& LOGs/lcio &
+$ tail -f LOGs/lcio
+...
+CTRL+C
+$ ls ../RPMS/x86_64/
+lcio213-02.13.01-kekcc2a.x86_64.rpm  ....
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/lcio213-02.13.01-kekcc2a.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ mv home/<your user id>/sw/lcio ~/sw/
+$ cd ..
+$ rm -rf temp
+$ mv lcio213-02.13.01-kekcc2a.src.rpm done/
+
+
+0-4) stdhep/stdhep-5-06-01 to build whizard/lcsoft
+$ pwd
+<your home directory>/rpmbuild/SPECS/tmp
+$ rpm -i  stdhep-5.06.01-kekcc2a.src.rpm 
+$ cd ..
+$ rpmbuild -ba stdhep.spec --nodebuginfo >& LOGs/stdhep &
+$ tail -f LOGs/stdhep
+...
+CTRL+C
+$ ls ../RPMS/x86_64/
+....  stdhep-5.06.01-kekcc2a.x86_64.rpm
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/stdhep-5.06.01-kekcc2a.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ mv home/<your user id>/sw/stdhep ~/sw/
+$ cd ..
+$ rm -rf temp
+$ mv stdhep-5.06.01-kekcc2a.src.rpm done/
+
+# probably not needed
+# g4/9.6.p02
+# 	clhep/2.2.0.1
+# 	gsl/1.16
+# 	xercesc/3.1.4
+
+0-5) ocaml/4.14.2 to build whizard
+0-5-1) ocaml4
+$ pwd
+<your home directory>/rpmbuild/SPECS/tmp
+$ rpm -i ocaml4-4.14.2-14.el91c.src.rpm 
+$ cd ..
+$ rpmbuild -ba ocaml4.spec --nodebuginfo >& LOGs/ocaml4 &
+$ tail -f LOGs/ocaml4
+....
+CTRL+C
+$ ls ../RPMS/x86_64/
+.... ocaml4-4.14.2-14.el91c.x86_64.rpm ... 
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/ocaml4-4.14.2-14.el91c.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ mv home/<your user id>/sw/ocaml ~/sw/
+$ cd ..
+$ rm -rf temp
+$ mv ocaml4-4.14.2-14.el91c.src.rpm done/
+
+0-5-2) opensp/1.5.2
+$ pwd
+<your home directory>/rpmbuild/SPECS/tmp
+$ rpm -i opensp-1.5.2-14.el949a.src.rpm 
+$ cd ..
+$ rpmbuild -ba opensp.spec --nodebuginfo >& LOGs/opensp &
+$ tail -f LOGs/opensp
+....
+CTRL+C
+$ ls ../RPMS/x86_64/
+.... opensp-1.5.2-14.el949a.x86_64.rpm ...
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/opensp-1.5.2-14.el949a.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ mv home/<your user id>/sw/opensp ~/sw/
+$ cd ..
+$ rm -rf temp
+$ mv opensp-1.5.2-14.el949a.src.rpm done/
+ 
+
+0-5-3) openjade/1.3.2
+$ pwd
+<your home directory>/rpmbuild/SPECS/tmp
+$ rpm -i openjade-1.3.2-14.el981c.src.rpm 
+$ cd ..
+$ rpmbuild -ba openjade.spec --nodebuginfo >& LOGs/openjade &
+$ tail -f LOGs/openjade
+....
+CTRL+C
+$ ls ../RPMS/x86_64/
+.....  openjade-1.3.2-14.el981c.x86_64.rpm ....
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/openjade-1.3.2-14.el981c.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ mv home/<your user id>/sw/openjade ~/sw/
+$ cd ..
+$ rm -rf temp
+$ mv opensp-1.5.2-14.el949a.src.rpm done/
+
+
+0-5-4) ocamulfind/1.9.8
+$ pwd
+<your home directory>/rpmbuild/SPECS/tmp
+$ rpm -i ocamlfind4-1.9.8-14.el91b.src.rpm 
+$ cd ..
+$ rpmbuild -ba ocamlfind4.spec --nodebuginfo >& LOGs/ocamlfind4 &
+$ tail -f LOGs/ocamlfind4
+....
+CTRL+C
+$ ls ../RPMS/x86_64/
+.....  ocamlfind4-1.9.8-14.el91b.x86_64.rpm  ......
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/ocamlfind4-1.9.8-14.el91b.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ tar -zcvf - -C home/<your user id>/sw/ ocaml | tar -zxf - -C ~/sw/ 
+$ cd ..
+$ rm -rf temp
+$ mv ocamlfind4-1.9.8-14.el91b.src.rpm done/
+
+
+0-5-5) ocamul-num/1.5
+$ cd ~/rpmbuild/SPECS/tmp
+$ rpm -i ocaml4-num-1.5-14.el91b.src.rpm 
+$ cd ..
+$ export PATH=~/sw/ocaml/4.14.2/bin:$PATH
+$ rpmbuild -ba ocaml4-num.spec --nodebuginfo >& LOGs/ocaml4-num &
+$ tail -f LOGs/ocaml4-num
+....
+CTRL+C
+$ ls ../RPMS/x86_64/
+..... ocaml4-num-1.5-14.el91b.x86_64.rpm  .....
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/ocaml4-num-1.5-14.el91b.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ tar -zcvf - -C home/<your user id>/sw/ ocaml | tar -zxf - -C ~/sw/ 
+$ cd ..
+$ rm -rf temp
+$ mv ocaml4-num-1.5-14.el91b.src.rpm done/
+
+
+0-6) HepMC/2.06.09 to build whizard
+$ cd ~/rpmbuild/SPECS/tmp
+$ rpm -i HepMC-2.06.09-14.el91b.src.rpm
+$ cd ..
+$ rpmbuild -ba hepmc2.spec --nodebuginfo >& LOGs/hepmc2 &
+$ tail -f LOGs/hepmc2
+....
+CTRL+C
+$ ls ../RPMS/x86_64/
+HepMC-2.06.09-14.el91b.x86_64.rpm .....
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/HepMC-2.06.09-14.el91b.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ mv home/<your user id>/sw/HepMC ~/sw
+$ cd ..
+$ rm -rf temp
+$ mv HepMC-2.06.09-14.el91b.src.rpm done/
+
+
+0-7) tauola/2.7 for whizard for ILC
+$ cd ~/rpmbuild/SPECS/tmp
+$ rpm -i tauola-2.7-kekcc1g.src.rpm
+$ cd ..
+$ rpmbuild -ba tauola.spec --nodebuginfo >& LOGs/tauola &
+$ tail -f LOGs/tauola
+....
+CTRL+C
+$ ls ../RPMS/x86_64/
+..... tauola-2.7-kekcc1g.x86_64.rpm .....
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/tauola-2.7-kekcc1g.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ mv home/<your user id>/sw/tauola ~/sw
+$ cd ..
+$ rm -rf temp
+$ mv tauola-2.7-kekcc1g.src.rpm done/
+
+
+0-8) tauface-2.7: tauola to lcsoft interface for ILC
+$ cd ~/rpmbuild/SPECS/tmp
+$ rpm -i tauface-2.7-kekcc1c.src.rpm
+$ cd ..
+$ rpmbuild -ba tauface.spec --nodebuginfo >& LOGs/tauface &
+$ tail -f LOGs/tauface
+....
+CTRL+C
+$ ls ../RPMS/x86_64/
+..... tauface-2.7-kekcc1c.x86_64.rpm .....
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/tauface-2.7-kekcc1c.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ tar -cvf - -C home/<your user id>/sw/tauola 2.7 | tar -xf - -C ~/sw/tauola/
+$ cd ..
+$ rm -rf temp
+$ mv tauface-2.7-kekcc1c.src.rpm done/
+
+
+0-9) whizard/whizard-1.95 to build physsim dbd generators
+$ cd ~/rpmbuild/SPECS/tmp
+$ rpm -i whizard1-1.95-14.el91i.src.rpm
+$ cd ..
+$ rpmbuild -ba whizard1.spec --nodebuginfo >& LOGs/whizard1 &
+$ tail -f LOGs/whizard1
+....
+CTRL+C
+$ ls ../RPMS/x86_64/
+...... whizard1-1.95-14.el91i.x86_64.rpm 
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/whizard1-1.95-14.el91i.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ mv home/<your user id>/sw/whizard ~/sw
+$ cd ..
+$ rm -rf temp
+$ mv whizard1-1.95-14.el91i.src.rpm done/
+
+
+0-10) clhep22 for lcsoft
+$ cd ~/rpmbuild/SPECS/tmp
+$ rpm -i clhep22-2.2.0.1-kekcc2a.src.rpm 
+$ cd ..
+$ rpmbuild -ba clhep22.spec --nodebuginfo >& LOGs/clhep22 &
+$ tail -f LOGs/clhep22
+....
+CTRL+C
+$ ls ../RPMS/x86_64/
+...... clhep22-2.2.0.1-kekcc2a.x86_64.rpm ......
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/clhep22-2.2.0.1-kekcc2a.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ mv home/<your user id>/sw/clhep ~/sw
+$ cd ..
+$ rm -rf temp
+$ mv clhep22-2.2.0.1-kekcc2a.src.rpm done/
+
+
+0-11) cernlib-2006 for jsf/lcsoft (essential!)
+$ cd ~/rpmbuild/SPECS/tmp
+$ rpm -i cernlib-2006-kekcc6a.src.rpm
+$ cd ..
+$ rpmbuild -ba cernlib-64.spec --nodebuginfo >& LOGs/cernlib &
+$ tail -f LOGs/cernlib
+....
+CTRL+C
+$ ls ../RPMS/x86_64/
+...... cernlib-2006-kekcc6a.x86_64.rpm   ......
+$ cd tmp
+$ mkdir temp
+$ cd temp
+$ rpm2cpio ../../../RPMS/x86_64/cernlib-2006-kekcc6a.x86_64.rpm | cpio -id
+$ ls
+home  usr
+$ mv home/<your user id>/sw/cern ~/sw
+$ cd ..
+$ rm -rf temp
+$ mv cernlib-2006-kekcc6a.src.rpm  done/
+
+
+
+1) How to build lcsoft
+$ cd ~/sw
+$ tar -zxvf ~/sandbox/lcinstall/lcsoft.tar.gz
+$ cd lcsoft
+$ bash
+$ vi bin/setup.sh
+....
+   adjust SWDIR to suit your env
+   check JAVA_HOME
+....
+$ source bin/setup.sh
+$ sh bin/lcbuild.sh 2>&1 | tee make.log
+.....
+	if trapped into rootcint, type
+	.q
+.....
+$ exit
+C All needed libraries are ready now
+
+2) Prepare your private physsim workspace
+C This is the place where you are going to run your physsim generator
+$ mkdir -p ~/work/physics
+$ cd ~/work/physics
+$ cp -p ~/sandbox/lcinstall/setup-physsim.sh .
+$ vi setup-physsim.sh
+.....
+	adjust some env vars
+.....
+$ bash
+$ source setup-physsim.sh
+$ cp -a ~/sw/lcsoft/physsim .
+$ cd physsim/pro/dbd
+$ make 2>&1 | tee make.log
+
+
+3) How to run dbd generators
+$ cd ~/work/physics/physsim/pro/dbd
+
+For instance, if you want to run tth generator, do the following:
+
+$ pushd TTHStudy/prod
+$ vi jsf.conf
+....
+	adjust job parameters such as Ecm, JSFHadronizer.Type, etc.
+	most often only following ones need to be modified:
+	<Roots> -- center of mass energy
+	<PolElectron> -- electron beam polarization
+	<PolPositron> -- positron beam polarization
+	<LumiFileDirectory> -- beam spectrum produced by GuineaPig (Lumi_Linker files)
+	<OutputFileName> -- output stdhep events file name
+	<Ntries> -- number of events
+....
+$ jsf -b -q bases.C # to do bases integration; cross section is given in the end
+$ jsf -b -q sim.C   # to do spring event generation;
+This produces both hepevt and QuickSim data
+C stdhep events are now produced; basically done if one would pass the generator events to detector simulation
+
+Optionally you can try 
+$ jsf -b -q gui.C   # analysis with QuickSim
+
+$ popd
+
+CAUTION
+-------
+This optional move might destroy the hepevt file data.
+Make sure to backup the data.
+
+
+
 
